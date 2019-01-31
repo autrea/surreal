@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>Surreal</title>
+        <link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+
+		<style>
+			html, body {
+				width: 100%;
+				height: 100%;
+			}
+
+			body {
+				background-color: #ffffff;
+				margin: 0;
+				overflow: hidden;
+                color: white;
+                font-family: 'Quicksand', sans-serif;
+			}
+
+			#blocker {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0,0,0,1);
+			}
+
+			#paragraphs { 
+                font-size: 25px;
+                text-align: left;
+                text-indent: 50px;
+
+                margin: 40vh auto;
+				width: 50%;
+
+				-webkit-box-align: center;
+				-moz-box-align: center;
+				box-align: center;
+
+				color: #ffffff;
+				text-align: left;
+				cursor: pointer;
+			}
+
+            #citations {
+                color: gray;
+                text-align: right;
+                font-size: 12px;
+                font-family: 'Quicksand', sans-serif;
+                cursor: auto;
+            }
+
+            a {
+                text-decoration: none;
+                color: white;
+                cursor: pointer;
+            }
+
+            #loader { /*https://www.w3schools.com/howto/howto_css_loader.asp*/
+                border: 16px solid #f3f3f3;
+                border-top: 16px solid #000000;
+                border-radius: 50%;
+                width: 120px;
+                height: 120px;
+                animation: spin 2s linear infinite;
+                margin: 25vw auto;
+            }
+
+            #loading {
+                position: relative;
+                margin-top: -20vw;
+                text-align: center;
+                font-size: 30px;
+            }
+
+            #ready {
+                font-size: 40px;
+                text-align: center;
+                margin-top: 40vw;
+                cursor: pointer;
+                color: rgba(255,255,255,0.0);
+            }
+
+            #instructions {
+                position: absolute;
+                display: grid;
+                grid-template-columns: repeat(7, 12.25%);
+                grid-template-rows: repeat(3, 3vw);
+                grid-column-gap: 2.375%;
+                grid-row-gap: 1.2vw;
+                width: 30%;
+                margin: 0 35%;
+                padding-top: 40vw;
+                
+            }
+
+            .border {
+                display: block;
+                height: 2vw;
+                width: 1vw;
+                padding: 0 1vw 1vw 1vw;
+                border-style: solid;
+                border-width: 0.3vw;
+                border-radius: 1vw;
+                border-color: rgba(255,255,255,0.0);
+            }
+
+            h2 { color: rgba(255,255,255,0.0); }
+            .w { grid-column: 2/3; grid-row: 1/2; margin-left: -0.3vw; }
+            .a { grid-column: 1/2; grid-row: 2/3; }
+            .s { grid-column: 2/3; grid-row: 2/3; }
+            .d { grid-column: 3/4; grid-row: 2/3; }
+            .or { 
+                grid-column: 4/5; grid-row: 2/3; 
+                color: rgba(255,255,255,0.0); 
+                text-align: center;
+            }
+            .up { grid-column: 6/7; grid-row: 1/2; margin-left: -0.3vw; }
+            .left { grid-column: 5/6; grid-row: 2/3; }
+            .down { grid-column: 6/7; grid-row: 2/3; }
+            .right { grid-column: 7/8; grid-row: 2/3; }
+            .quit {
+                font-size: 40px;
+                text-align: center;
+                width: 100%;
+                color: rgba(255,255,255,0.0);
+                grid-column: 1/8; grid-row: 3/4;
+            }
+
+            .glow { text-shadow: 0 0 0.1vw rgba(255,255,255,1); }
+
+            a:hover { text-shadow: 0 0 1vw rgba(255,255,255,1); }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+		</style>
+        
+	</head>
+    
+	<body>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="js/three.js"></script>
+        <script src="js/Detector.js"></script>
+        <script src="js/SPE.js"></script>
+        <script src="js/ShadowMapViewer.js"></script>
+        <script src="js/OBJLoader.js"></script>
+        <script src="js/PointerLockControls.js"></script>
+       
+    <!--    BBBBBB     
+            BB    BB   
+            BLOCKER    
+            BB     BB  
+            BB     BB  
+            BBBBBBB    -->
+
+        <div id="blocker">
+        <div id="loader"></div>
+        <h1 id="loading">Please be patient while my subconscious loads.</h1>
+        <div id="ready" class="hover">The site is ready. Click to begin.</div>
+			<div id="paragraphs">
+				<p id="paragraph1" class="hover">"The Surrealists sought to channel the unconscious as a means to unlock the power of the imagination. Disdaining rationalism and literary realism, and powerfully influenced by psychoanalysis, the Surrealists believed the rational mind repressed the power of the imagination, weighting it down with taboos."</p>
+
+                <p id="paragraph2" class="hover">"Influenced also by Karl Marx, they hoped that the psyche had the power to reveal the contradictions in the everyday world and spur on revolution. Their emphasis on the power of personal imagination puts them in the tradition of Romanticism, but unlike their forebears, they believed that revelations could be found on the street and in everyday life."</p>
+
+                <div id="end">
+                    <p id="paragraph3" class="hover">"The Surrealist impulse to tap the unconscious mind, and their interests in myth and primitivism, went on to shape many later movements, and the style remains influential to this today."</p>
+
+                    <p id="citations">"Surrealism Movement Overview and Analysis". [Internet]. 2017. <a href="http://www.theartstory.org/">TheArtStory.org</a> <br>
+                    Content compiled and written by The Art Story Contributors  <br>
+                    Edited and published by The Art Story Contributors<br>
+                    Available from: <a href="http://www.theartstory.org/movement-surrealism.htm">http://www.theartstory.org/movement-surrealism.htm</a> <br>
+                    [Accessed 04 Dec 2017]
+                    <br><br>
+
+                    This project utilizes the <a href="https://jquery.com/">JQuery</a> and <a href="https://threejs.org/">Three.js</a> JavaScript library,<br>along with a number of Three.js sub-libraries named:<br>
+                    <!-- <a href="https://gist.github.com/minwe/a7ef59b808aa6c01f996">Detector.js</a><br> -->
+                    <!-- <a href="https://threejs.org/">UnpackDepthRGBAShader.js</a><br> -->
+                    <a href="https://threejs.org/examples/webgl_shadowmap_viewer.html">ShadowMapViewer.js</a><br>
+                    <a href="https://github.com/mrdoob/three.js/blob/master/examples/webgl_loader_obj.html">OBJLoader.js</a><br>
+                    <a href="https://gist.github.com/bitbrain/108a2b2baa86abff5a722fd606ef4060">PointerLockControls.js</a> and<br>
+                    <a href="https://github.com/squarefeet/ShaderParticleEngine">SPE.js</a>
+                    
+                    <br>
+
+                    "Eleborate Thunder" Sound Effects recorded by <a href="http://soundbible.com/2005-Elaborate-Thunder.html">Mike Koenig</a>
+
+                    </p>
+                </div>
+			</div>
+		</div>
+
+        <div id="instructions">
+            <h2 class="w border">W</h2>
+            <h2 class="a border">A</h2>
+            <h2 class="s border">S</h2>
+            <h2 class="d border">D</h2>
+            <h2 class="or">&nbsp;or&nbsp;</h2>
+            <h2 class="up border">&#8593;</h2> <!-- up -->
+            <h2 class="left border">&#8592;</h2> <!-- left -->
+            <h2 class="down border">&#8595;</h2> <!-- down -->
+            <h2 class="right border">&#8594;</h2> <!-- right -->
+            <h1 class="quit">Press the Esc key to quit.</h1>
+        </div>
+
+        
+        
+        
+        
+		
+        <script>
+
+
+
+        $(document).ready(function() {
+
+            
+
+            $("#ready").hide();
+            $("#paragraph1").hide();
+            $("#paragraph2").hide();
+            $("#end").hide();
+            $("#instructions").hide();
+            $(".quit").hide();
+
+            $("#ready").on("click", function() 
+            {
+                $("#ready").fadeOut(1000);
+                $("#paragraph1").delay(2000).fadeIn(1000);
+            });
+
+            $("#paragraph1").on("click", function() 
+            {
+                $("#paragraph1").fadeOut(1000);
+                $("#paragraph2").delay(2000).fadeIn(1000);
+            });
+
+            $("#paragraph2").on("click", function() 
+            {
+                $("#paragraph2").fadeOut(1000);
+                $("#end").delay(2000).fadeIn(1000);
+            });
+
+            // ADD GLOW HOVER
+
+            $(".hover").on("mouseenter", function() {
+                $(".hover").addClass("glow");
+            });
+            $(".hover").on("mouseleave", function() {
+                $(".hover").removeClass("glow");
+            });
+
+            // keypressed eventListeners
+            var check = 0;
+            document.onkeydown = function(event) {
+                // console.log(event.which);
+        
+                if (event.which == 87 || // w
+                    event.which == 65 || // a
+                    event.which == 83 || // s
+                    event.which == 68 || // d
+                    event.which == 38 || // up
+                    event.which == 37 || // left
+                    event.which == 40 || // down
+                    event.which == 39 && // right
+                    check < 1) 
+                {
+                    $("#instructions").fadeOut(1000);
+                    check++;
+                }
+                if (event.which == 27)
+                {
+                    $("#end").fadeIn(1000);
+                }
+            }
+
+            var SHADOW_MAP_WIDTH = 2048, SHADOW_MAP_HEIGHT = 1024;
+            // var EARTH_POS_Y = 1400000;
+            // var EARTH_POS_X = -1400000;
+            // var EARTH_POS_Z = -1400000;
+            // var EARTH_SIZE = 5000;
+            
+            var BUILDING_1_X, BUILDING_1_Y, BUILDING_1_Z;
+            var BUILDING_WIDTH = 2000;
+            var BUILDING_HEIGHT = 10000;
+            var BUILDING_DEPTH = 5000;
+            
+            var SCREEN_WIDTH = window.innerWidth;
+			var SCREEN_HEIGHT = window.innerHeight;
+            var FLOOR = 0;
+            
+            var particleGroup;
+            var emitter;
+
+			var camera, scene, renderer, controls;
+			var mixer, morphs = [];
+			var objects = [];
+            var buildings = [];
+			var planets = [];
+            var lamps = [];
+            var pendules = [];
+            var clocks = [];
+            var spin = [];
+
+            var light, l_light_counter = 0, r_light_counter = 0;
+            var earthLight;
+
+            var light_x = -635, light_y = 660, light_z = 0;
+            var lights = [0,0,0,0,
+                          0,0,0,0,
+                          0,0,0,0,
+                          0,0,0,0,
+                          0,0,0,0];
+            var lightShadowMapViewer;
+			var raycaster;
+
+            var lamp_x = 1, lamp_z = 0, l_lamp_counter = 0, r_lamp_counter = 0, lamp_d = -1000;
+
+            var random = Math.floor( ( Math.random() * 10 ) + 1);
+
+            var sphere_location = 0;
+
+            // LOADER
+            var manager;
+            var textureLoader;
+
+            var texture_bark;
+            var texture_bear;
+            var texture_bed;
+            var texture_bowl;
+            var texture_bridge;
+            var texture_chair;
+            var texture_dresser;
+            var texture_eyeball;
+            var texture_heart;
+            var texture_lamp;
+            var texture_mug;
+            var texture_nightstand;
+            var texture_plate;
+            var texture_sand;
+            var texture_sky;
+            var texture_spoon;
+            var texture_table;
+            var texture_tongue;
+            var texture_wood;
+
+            var texture_mercury;
+            var texture_venus;
+            var texture_earth;
+            var texture_moon;
+            var texture_mars;
+            var texture_jupiter;
+            var texture_saturn;
+            var texture_neptune;
+            var texture_uranus;
+            var texture_pluto;
+            
+            // brick
+            var brick_1;  // http://www.mb3d.co.uk/mb3d/Brick_Seamless_and_Tileable_High_Res_Textures.html
+            var brick_2;  // https://s-media-cache-ak0.pinimg.com/originals/3c/f5/15/3cf5151d0d234f11f7dc1e025b2c702d.jpg
+            var brick_3;  // http://paper-backgrounds.com/textureimages/2012/08/seamless-yellow-brown-calais-brick-wall-texture-for-3d-hd.jpg
+            var brick_4;  // https://i.pinimg.com/originals/fd/03/c4/fd03c4208d9c813b0ef2eca35be09991.jpg
+            var brick_5;  // http://xboxhut.com/the-amazing-seamless-brick-wall-texture-regarding-really-encourage/seamless-brick-wall-texture-pavers-kitchen/
+            
+            var loader;
+            var onProgress;
+            var onError;
+
+            // Call Functions
+			pointerLock();
+			init();
+            rain();
+            playSounds();
+			animate();
+			controls();
+            
+			var controlsEnabled = false;
+			var moveForward = false;
+			var moveBackward = false;
+			var moveLeft = false;
+			var moveRight = false;
+			var canJump = false;
+
+			var prevTime = performance.now();
+			var velocity = new THREE.Vector3();
+			var direction = new THREE.Vector3();
+
+            // IIIIII                 TT
+            //   II             II    TT
+            //   II                 TTTTTT
+            //   II    NNNNN    II    TT
+            //   II    NN   NN  II    TT
+            //   II    NN   NN  II    TT
+            // IIIIII  NN   NN  II    TT
+            
+			function init() {
+				camera = new THREE.PerspectiveCamera( 75, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 99999999999999 );
+                camera.position.set( 0, 50, 0 );
+                
+                clock = new THREE.Clock();
+
+				scene = new THREE.Scene();
+				// scene.background = new THREE.Color( 0x12565C );
+				scene.background = new THREE.Color( 0x000000 );
+				// scene.fog = new THREE.Fog( 0xCCffff, 0, 80000 );
+                scene.fog = new THREE.FogExp2( 0x000000, 0.0001 );
+
+                
+                //  LL                   HH        TT
+                //  LL      II           HH        TT
+                //  LL            GGG    HH     TTTTTTTT  SSSS
+                //  LL      II  GG   GG  HHHHHH    TT   SS
+                //  LL      II   GGGGGG  HH   HH   TT    SSSSS
+                //  LL      II       GG  HH   HH   TT        SS
+                //  LIGHTS  II   GGGGG   HH   HH   TT    SSSSS
+                
+				// var hemLight = new THREE.HemisphereLight( 0xFFFFFF, 0xEFEEAA, 0.1 );
+                var ambient = new THREE.AmbientLight( 0xFFFFFF, 1 );
+                // scene.add( ambient );
+
+                earthLight = new THREE.PointLight( 0xffffff, 10000, 100000, 5.0 ); //color, intensity, distance, decay
+    //             earthLight.position.set( EARTH_POS_X - EARTH_SIZE, EARTH_POS_Y + EARTH_SIZE, EARTH_POS_Z + EARTH_SIZE );
+				// scene.add(earthLight);
+
+                var color_picked;
+                var color_picker;
+
+                // for(var i = 0; i < 2; i++) {
+                    function createLight( color ) {
+                    
+                        var pointLight = new THREE.SpotLight( color, 0.4, 100, 0.3, 0.5, 0 );
+                        pointLight.castShadow = true;
+                        pointLight.shadow = new THREE.LightShadow( new THREE.PerspectiveCamera( 50, 1, 100, 2500 ) );
+                        pointLight.shadow.bias = 0.0001;
+                        pointLight.shadow.mapSize.width = SHADOW_MAP_WIDTH;
+                        pointLight.shadow.mapSize.height = SHADOW_MAP_HEIGHT;
+
+                        var geometry = new THREE.SphereGeometry( 30, 16, 8 );
+                        var material = new THREE.MeshBasicMaterial( { color: color } );
+                        var sphere = new THREE.Mesh( geometry, material );
+
+                        pointLight.add( sphere );
+
+                        return pointLight;
+                    }
+
+                    for(var i = 0; i < 10; i++) 
+                    {
+                        color_picker = Math.floor( ( Math.random() * 10 ) + 1);
+                        switch(color_picker) 
+                        {
+                            case 1: color_picked = 0xff0000; break;
+                            case 2: color_picked = 0x00ff00; break;
+                            case 3: color_picked = 0x0000ff; break;
+                            case 4: color_picked = 0xffff00; break;
+                            case 5: color_picked = 0xff00ff; break;
+                            case 6: color_picked = 0x00ffaa; break;
+                            case 7: color_picked = 0xff9900; break;
+                            case 8: color_picked = 0xaa00ff; break;
+                            case 9: color_picked = 0xaaff00; break;
+                            default: color_picked = 0xffffff;
+                        }
+
+                        if(i > 4)
+                        {
+                            light_x = 635;
+                        }
+
+                        lights[i] = createLight( color_picked );
+                        scene.add( lights[i] );
+
+                        lights[i].position.set(        light_x, light_y, light_z - 5000 * l_light_counter );
+
+                        lights[i].target.position.set( light_x, -1000, light_z - 5000 * l_light_counter );
+                        // lights[i].target.position.set( 0, -100, 0 );
+                        
+                        l_light_counter++;
+
+                        if(i == 4)
+                        {
+                            l_light_counter = 0;
+                        }
+                    }
+
+
+				raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, - 1, 0 ), 0, 10 );
+
+                Loader();
+                
+				
+
+                // ground
+		        var geometry = new THREE.PlaneBufferGeometry( 1000, 1000 );
+				var planeMaterial = new THREE.MeshPhongMaterial( { color: 0xffdd99, specular: 0x111111, map: texture_sand } );
+				var ground = new THREE.Mesh( geometry, planeMaterial );
+						
+				ground.position.set( 0, FLOOR, 0 );
+				ground.rotation.x = - Math.PI / 2;
+				ground.scale.set( 100, 100, 100 );
+
+				ground.castShadow = false;
+				ground.receiveShadow = true;
+
+				scene.add( ground );
+  
+				renderer();
+			} // end init
+            
+            //  LL         OOOO        AA     DDDDD     EEEEEEE  RRRRRR
+            //  LL       OO    OO    AA  AA   DD   DD   EE       RR   RR
+            //  LL      OO      OO  AA    AA  DD    DD  EE       RR   RR
+            //  LL      OO      OO  AAAAAAAA  DD    DD  EEEEE    RRRRRR
+            //  LL       OO    OO   AA    AA  DD   DD   EE       RR   RR
+            //  LOADER     OOOO     AA    AA  DDDDD     EEEEEEE  RR    RR
+
+			function Loader() {
+				manager = new THREE.LoadingManager();
+				manager.onProgress = function ( item, loaded, total ) {
+					console.log( item, loaded, total );
+				};
+				textureLoader = new THREE.TextureLoader( manager );
+
+                // Tiled Textures
+                var brick_tiling = 50;
+                brick_1 = textureLoader.load( 'assets/materials/brick_1.jpg', function(texture) {
+                    texture.wrapS = brick_1.wrapT = THREE.RepeatWrapping; 
+                    texture.offset.set( 0, 0 ); 
+                    texture.repeat.set( brick_tiling, brick_tiling ); 
+                });
+
+                brick_2 = textureLoader.load( 'assets/materials/brick_2.jpg', function(texture) {
+                    texture.wrapS = brick_2.wrapT = THREE.RepeatWrapping; 
+                    texture.offset.set( 0, 0 ); 
+                    texture.repeat.set( brick_tiling, brick_tiling ); 
+                });
+
+                brick_3 = textureLoader.load( 'assets/materials/brick_3.jpg', function(texture) {
+                    texture.wrapS = brick_3.wrapT = THREE.RepeatWrapping; 
+                    texture.offset.set( 0, 0 ); 
+                    texture.repeat.set( brick_tiling, brick_tiling ); 
+                });
+
+                brick_4 = textureLoader.load( 'assets/materials/brick_4.jpg', function(texture) {
+                    texture.wrapS = brick_4.wrapT = THREE.RepeatWrapping; 
+                    texture.offset.set( 0, 0 ); 
+                    texture.repeat.set( brick_tiling, brick_tiling ); 
+                });
+
+                brick_5 = textureLoader.load( 'assets/materials/brick_5.jpg', function(texture) {
+                    texture.wrapS = brick_5.wrapT = THREE.RepeatWrapping; 
+                    texture.offset.set( 0, 0 ); 
+                    texture.repeat.set( brick_tiling, brick_tiling ); 
+                });
+
+                texture_sand = textureLoader.load( 'assets/materials/sand.jpg', function(texture) {
+                    texture.wrapS = texture_sand.wrapT = THREE.RepeatWrapping; 
+                    texture.offset.set( 0, 0 ); 
+                    texture.repeat.set( 2000, 2000 ); 
+                });
+
+                texture_concrete = textureLoader.load( 'assets/materials/concrete.jpg', function(texture) {
+                    texture.wrapS = texture_concrete.wrapT = THREE.RepeatWrapping; 
+                    texture.offset.set( 0, 0 ); 
+                    texture.repeat.set( 6, 1 ); 
+                });
+
+                // Non-tiled Textures
+
+                //http://texturelib.com/Textures/road/road/road_road_0019_03_preview.jpg
+                texture_asphalt = textureLoader.load( 'assets/materials/asphalt_road.jpg' );
+                texture_bark = textureLoader.load( 'assets/materials/bark.jpg' );
+                texture_clock = textureLoader.load( 'assets/materials/cface.png' );
+                texture_lamp = textureLoader.load( 'assets/materials/grey-concrete-texture.jpg' );
+                texture_pendule = textureLoader.load( 'assets/materials/Pendule_default_default_1_3.png' );
+                texture_clock = textureLoader.load( 'assets/materials/Pendule_default_default_1_3.png' );
+                texture_plate = textureLoader.load( 'assets/materials/Tarelka.png' );
+                texture_wood = textureLoader.load( 'assets/materials/ship_planks_diffuse.png' );
+                
+
+
+                // wide clock https://free3d.com/3d-model/wide-clock-67014.html //jetstorm_477 2 years ago //ley1998@live.fr
+
+                // clock with pendulum https://free3d.com/3d-model/re-rebirth-dining-room-clock-65249.html steve45 4 years ago
+
+                // alarm clock https://free3d.com/3d-model/clock-2122.html jojacki 4 months ago
+
+
+                
+				onProgress = function ( xhr ) {
+					if ( xhr.lengthComputable ) {
+						var percentComplete = xhr.loaded / xhr.total * 100;
+						console.log( Math.round(percentComplete, 2) + '% downloaded' );
+					}
+				};
+				onError = function ( xhr ) { };
+                loader = new THREE.OBJLoader( manager );
+
+                load_skydome();
+                load_poles();
+                load_lamps();
+                load_buildings();
+                load_road();
+                load_pendules();
+                load_clocks();
+                load_sidewalk();
+                load_bridge();
+                load_plates();
+                load_beds();
+                load_mugs();
+                load_spoons();
+                load_tables();
+                load_bowls();
+                load_chairs();    
+			}
+
+            // BRIDGE
+
+            function load_bridge()
+            { // https://free3d.com/3d-model/old-bridge-lp-38609.html
+                var texture_bridge = textureLoader.load( 'assets/materials/TexturesCom_Asp.jpg' );
+                    loader.load( 'assets/objects/bridge_low_poly.obj', function ( object ) {
+                        object.traverse( function ( child ) 
+                        {
+                            if ( child instanceof THREE.Mesh ) 
+                            {
+                                child.material.map = texture_bridge;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = 80;
+                            object.position.y = 5000;
+                            object.rotation.y = Math.PI/2;
+                            object.rotation.z = Math.PI;
+                            object.scale.set( s, s, s );
+
+                            scene.add( object );
+                            objects.push( object );
+                    }, onProgress, onError );
+            }
+
+            // DRESSER
+
+            
+            // MUGS
+
+            function load_mugs()
+            {  // https://free3d.com/3d-model/enameled-mug-30358.html
+                var texture_mug = textureLoader.load( 'assets/materials/Krujka-Me.png' );
+                
+                for(var i = 0; i < 100; i++) { 
+                    loader.load( 'assets/objects/Krujka-Me.obj', function ( object ) {
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_mug;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = (Math.random()-Math.random())*20;
+                            if(s < 1) {
+                                s *= 10;
+                            }
+                            object.position.z = (Math.random()-Math.random())* -5000;
+                            object.position.y = (Math.random()-Math.random())*1000;
+                            if(object.position.y < 10) { object.position.y *= 10 }
+                            object.position.x = (Math.random()-Math.random())*2000;
+                            object.rotation.x = (Math.random()-Math.random())*10;
+                            object.rotation.y = (Math.random()-Math.random())*10;
+                            object.rotation.z = (Math.random()-Math.random())*10;
+
+                            object.scale.set( s, s, s );
+
+                            scene.add( object );
+                            spin.push( object );
+                    }, onProgress, onError );
+
+                }
+            }
+
+            // PLATES
+
+            function load_plates()
+            {
+                
+                // https://free3d.com/3d-model/russian-porcelain-plate-free-3d-model-98095.html
+                // Tarelka.png
+                // Tarelka.obj
+                for(var i = 0; i < 100; i++) { 
+                    loader.load( 'assets/objects/Tarelka.obj', function ( object ) {
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_plate;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = (Math.random()-Math.random())*20;
+                            if(s < 1) {
+                                s *= 10;
+                            }
+                            object.position.z = (Math.random()-Math.random())* -5000;
+                            object.position.y = (Math.random()-Math.random())*1000;
+                            if(object.position.y < 10) { object.position.y *= 10 }
+                            object.position.x = (Math.random()-Math.random())*2000;
+                            object.rotation.x = (Math.random()-Math.random())*10;
+                            object.rotation.y = (Math.random()-Math.random())*10;
+                            object.rotation.z = (Math.random()-Math.random())*10;
+
+                            object.scale.set( s, s, s );
+                            
+                            scene.add( object );
+                            spin.push( object );
+                    }, onProgress, onError );
+
+                }
+            }
+
+            // SPOONS
+
+            function load_spoons()
+            {  // https://free3d.com/3d-model/spoon-16202.html
+                for(var i = 0; i < 75; i++) { 
+                    loader.load( 'assets/objects/spoon.obj', function ( object ) {
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_plate;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = (Math.random()-Math.random())*20;
+                            if(s < 1) {
+                                s *= 10;
+                            }
+                            object.position.z = (Math.random()-Math.random())* -5000;
+                            object.position.y = (Math.random()-Math.random())*1000;
+                            if(object.position.y < 10) { object.position.y *= 10 }
+                            object.position.x = (Math.random()-Math.random())*2000;
+                            object.rotation.x = (Math.random()-Math.random())*10;
+                            object.rotation.y = (Math.random()-Math.random())*10;
+                            object.rotation.z = (Math.random()-Math.random())*10;
+
+                            object.scale.set( s, s, s );
+                            
+                            scene.add( object );
+                            spin.push( object );
+                    }, onProgress, onError );
+
+                }
+            }
+
+            // TABLES
+
+            function load_tables()
+            {   // https://free3d.com/3d-model/cinema4d-table-66762.html
+                for(var i = 0; i < 50; i++) { 
+                    loader.load( 'assets/objects/woodtable.obj', function ( object ) {
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_wood;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = (Math.random()-Math.random());
+                            if(s < 0.5) {
+                                s = 0.5;
+                            }
+                            object.position.z = (Math.random()-Math.random())* -10000;
+                            object.position.y = (Math.random()-Math.random())*1000;
+                            if(object.position.y < 10) { object.position.y *= 10 }
+                            object.position.x = (Math.random()-Math.random())*5000;
+                            object.rotation.x = (Math.random()-Math.random())*10;
+                            object.rotation.y = (Math.random()-Math.random())*10;
+                            object.rotation.z = (Math.random()-Math.random())*10;
+
+                            object.scale.set( s, s, s );
+                            
+                            scene.add( object );
+                            objects.push( object );
+                    }, onProgress, onError );
+
+                }
+            }
+
+            // BOWLS
+
+            function load_bowls()
+            {   // https://free3d.com/3d-model/simple-bowl-60681.html
+                for(var i = 0; i < 50; i++) { 
+                    loader.load( 'assets/objects/Bowl.obj', function ( object ) {
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_plate;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = (Math.random()-Math.random());
+                            if(s < 1) {
+                                s = 1;
+                            }
+                            object.position.z = (Math.random()-Math.random())* -10000;
+                            object.position.y = (Math.random()-Math.random())*1000;
+                            if(object.position.y < 10) { object.position.y *= 10 }
+                            object.position.x = (Math.random()-Math.random())*2000;
+                            object.rotation.x = (Math.random()-Math.random())*10;
+                            object.rotation.y = (Math.random()-Math.random())*10;
+                            object.rotation.z = (Math.random()-Math.random())*10;
+
+                            object.scale.set( s, s, s );
+                            
+                            scene.add( object );
+                            spin.push( object );
+                    }, onProgress, onError );
+                }
+            }
+
+            // CHAIRS
+
+            function load_chairs()
+            {   // https://free3d.com/3d-model/simple-low-poly-chair-55112.html
+                for(var i = 0; i < 100; i++) { 
+                    loader.load( 'assets/objects/chair.obj', function ( object ) {
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_wood;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = (Math.random()-Math.random())*20;
+                            if(s < 1) {
+                                s *= 10;
+                            }
+                            object.position.z = (Math.random()-Math.random())* -10000;
+                            object.position.y = (Math.random()-Math.random())*1000;
+                            if(object.position.y < 10) { object.position.y *= 10 }
+                            object.position.x = (Math.random()-Math.random())*2000;
+                            object.rotation.x = (Math.random()-Math.random())*10;
+                            object.rotation.y = (Math.random()-Math.random())*10;
+                            object.rotation.z = (Math.random()-Math.random())*10;
+
+                            object.scale.set( s, s, s );
+                            
+                            scene.add( object );
+                            spin.push( object );
+                    }, onProgress, onError );
+
+                }
+            }
+
+            // BEDS
+
+            function load_beds()
+            {
+                texture_bed = textureLoader.load( 'assets/materials/cloth.jpg' );
+                // https://free3d.com/3d-model/old-metal-bed-96580.html
+                // cloth.jpg || metal_tile.jpg
+                // Bed.obj
+                for(var i = 0; i < 50; i++) { 
+                    loader.load( 'assets/objects/Bed.obj', function ( object ) {
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_bed;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = (Math.random()-Math.random())*20;
+                            if(s < 1) {
+                                s *= 10;
+                            }
+                            object.position.z = (Math.random()-Math.random())* -10000;
+                            object.position.y = (Math.random()-Math.random())*1000;
+                            if(object.position.y < 10) { object.position.y *= 10 }
+                            object.position.x = (Math.random()-Math.random())*2000;
+                            object.rotation.x = (Math.random()-Math.random())*10;
+                            object.rotation.y = (Math.random()-Math.random())*10;
+                            object.rotation.z = (Math.random()-Math.random())*10;
+
+                            object.scale.set( s, s, s );
+                            
+                            scene.add( object );
+                            spin.push( object );
+                    }, onProgress, onError );
+
+                }
+            }
+
+
+                //BUILDINGS
+ 
+            
+            function load_buildings()
+            {
+                for( var i = 0; i < 100; i++ ) 
+                {
+                    r = Math.floor( ( Math.random() * 10 ) + 1);
+                    switch(r) 
+                    {
+                        case 1: 
+                        case 2: t = brick_1; break;
+                        case 3: 
+                        case 4: t = brick_2; break;
+                        case 5: 
+                        case 6: t = brick_3; break;
+                        case 7: 
+                        case 8: t = brick_4; break;
+                        default: t = brick_5;
+                    }
+                    var buildingGeometry = new THREE.BoxGeometry(  BUILDING_WIDTH,  BUILDING_HEIGHT,  BUILDING_DEPTH  );
+                    var brickMaterial = new THREE.MeshPhongMaterial( { color: 0xffdd99, specular: 0x111111, map: t } );
+                    var building = new THREE.Mesh( buildingGeometry, brickMaterial );
+                    building.recieveShadow = true;
+                    building.castShadow = true;
+                    buildings.push(building);
+                }
+                
+                var xp, zp = 0, c = 0;
+                for( var i = 0; i < 2; i++ ) {
+                    // r = Math.floor( ( Math.random() * 10 ));
+                    xp = -1000 + BUILDING_WIDTH * i;
+                    for( var j = 0; j < 10; j++ ) {
+                        zp = BUILDING_DEPTH * j;
+                        buildings[c].position.set( xp * 2 * -1, BUILDING_HEIGHT / 2, zp * -1.5  ); // x, y, z
+                        scene.add( buildings[c] );
+                        c++;
+                    }
+                }
+            }
+            
+            //  LL
+            //  LL
+            //  LL          AAAA   MMMMM MMMMM   PPPPP   SSSSS
+            //  LL        AA   AA  MM   MM   MM  PP  PP SS
+            //  LL       AA    AA  MM   MM   MM  PPPPPP  SSSSS
+            //  LL       AA   AAA  MM   MM   MM  PP          SS
+            //  LLLLLLLL  AAAA AA  MM   MM   MM  PP      SSSSS
+
+            function load_lamps() {
+                for( var i = 0; i < 20; i++ ) {
+                    loader.load( 'assets/objects/StreetLamp.obj', function ( object ) {
+                        // https://free3d.com/3d-model/street-light-lamp-61903.html // submitted by tyrosmith 2013, used 2017
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_lamp;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                        var s = 50;
+                        object.position.set(lamp_x * lamp_d, -1, l_lamp_counter * lamp_d * 5);
+                        object.scale.set( s, s, s );
+
+                        lamps.push( object );
+                        scene.add(object);
+
+                        l_lamp_counter++;
+                        
+                    }, onProgress, onError );
+                }
+                for( var i = 0; i < 20; i++ ) {
+                    loader.load( 'assets/objects/StreetLamp.obj', function ( object ) {
+                        // https://free3d.com/3d-model/street-light-lamp-61903.html // submitted by tyrosmith 2013, used 2017
+                        object.traverse( function ( child ) {
+                            if ( child instanceof THREE.Mesh ) {
+                                child.material.map = texture_lamp;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                        
+                        
+                        var lamp_rotation = 3.14;
+                        lamp_x = -1;
+                        var d = -1000;
+                        var s = 50;
+                        
+                        object.position.set(lamp_x * d, -1, r_lamp_counter * d * 5); // location
+                        // if(i == 0) {
+                        //     object.rotation.y = (lamp_rotation);
+                        // }
+                        object.rotation.y = lamp_rotation; // rotation = 1
+                        
+                        console.log(lamp_rotation);
+
+                        object.scale.set( s, s, s );
+                        lamps.push( object );
+                        scene.add(object);
+                        
+                        r_lamp_counter++;
+                        
+                    }, onProgress, onError );
+                }
+            }
+            
+            //  PPPPPP             LL
+            //  PP   PP            LL
+            //  PP   PP    OOO     LL     EEE      SSSS
+            //  PPPPPP   OO   OO   LL   EE   EE   SS
+            //  PP      OO     OO  LL  EEEEEEEEE   SSSS
+            //  PP       OO   OO   LL   EE            SS
+            //  PP         OOO     LL     EEEE    SSSSS
+
+			function load_poles() 
+            {
+				for(var i = 0; i < 100; i++) 
+                { 
+                    loader.load( 'assets/objects/pole.obj', function ( object ) {
+
+                        object.traverse( function ( child ) 
+                        {
+                            if ( child instanceof THREE.Mesh ) 
+                            {
+                                child.material.map = texture_bark;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+
+                            var s = (Math.random()-Math.random())*20;
+                            if(s < 3) 
+                            {
+                                s = 3;
+                            }
+
+                            object.position.z = (Math.random()-Math.random()) * -10000;
+                            object.position.x = (Math.random()-Math.random()) * 1000;
+                            object.rotation.x = (Math.random()-Math.random());
+                            object.rotation.y = (Math.random()-Math.random());
+                            object.rotation.z = (Math.random()-Math.random());
+
+                            object.scale.set( s, s, s );
+
+                            scene.add( object );
+                            objects.push( object );
+
+                    }, onProgress, onError );
+
+                }
+			}
+            
+            //  PPPPPP                        DD
+            //  PP   PP                       DD
+            //  PP   PP  EEEE   NNNNN    DDDDDDD
+            //  PPPPPP  EE  EE  NN  NN  DD    DD
+            //  PP     EEEEEEE  NN  NN  DD    DD
+            //  PP      EE      NN  NN  DD    DD
+            //  PP       EEEE   NN  NN   DDDDDDD
+
+            function load_pendules() 
+            {
+                for(var i = 0; i < 20; i++) 
+                { 
+                    loader.load( 'assets/objects/Pendule.obj', function ( object ) {
+
+                        object.traverse( function ( child ) 
+                        {
+                            if ( child instanceof THREE.Mesh ) 
+                            {
+                                child.material.map = texture_pendule;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+
+                            var s = (Math.random()-Math.random())*3;
+                            if(s < 1) { s = 1; }
+                            
+                            
+
+                            object.position.z = Math.random()* -10000;
+                                // if(object.position.z > 0) { object.position.y *= -1; }
+                            object.position.y = (Math.random()-Math.random())*1000;
+                                if(object.position.y < 100) { object.position.y = 100; }
+                            object.position.x = (Math.random()-Math.random())*5000;
+                                // if(s < 1) { s = 1; }
+                            object.rotation.x = (Math.random()-Math.random());
+                            object.rotation.y = (Math.random()-Math.random());
+                            object.rotation.z = (Math.random()-Math.random());
+
+                            object.scale.set( s, s, s );
+
+                            scene.add( object );
+                            pendules.push( object );
+
+                    }, onProgress, onError );
+
+                }
+            }
+
+            //     CCCCC    LL                       KK
+            //   CC     CC  LL                       KK
+            //  CC          LL     OOO        CCC    KK  KK    SSSS
+            //  CC          LL   OO   OO    CC   CC  KK KK   SS
+            //  CC          LL  OO     OO  CC        KKKK     SSSSS
+            //   CC     CC  LL   OO   OO    CC   CC  KK  KK       SS
+            //     CCCCC    LL     OOO        CCC    KK   KK  SSSSS
+
+            function load_clocks() 
+            {
+                for(var i = 0; i < 20; i++) 
+                { 
+                    loader.load( 'assets/objects/clock.obj', function ( object ) 
+                    {
+                        object.traverse( function ( child ) 
+                        {
+                            if ( child instanceof THREE.Mesh ) 
+                            {
+                                child.material.map = texture_clock;
+                                child.recieveShadow = true;
+                                child.castShadow = true;
+                            }
+                        });
+                            var s = (Math.random()-Math.random());
+                            if(s < 0.1) { s = 0.1; }
+
+                            object.position.z = Math.random()* -10000;
+                                // if(object.position.z > 0) { object.position.y *= -1; }
+                            object.position.y = (Math.random()-Math.random())*2000;
+                                if(object.position.y < 100) { object.position.y = 100; }
+                            object.position.x = (Math.random()-Math.random())*5000;
+                                // if(s < 1) { s = 1; }
+                            object.rotation.x = (Math.random()-Math.random());
+                            object.rotation.y = (Math.random()-Math.random());
+                            object.rotation.z = (Math.random()-Math.random());
+
+                            object.scale.set( s, s, s );
+
+                            scene.add( object );
+                            clocks.push( object );
+                            //LOADER
+                            if(i == clocks.length) {
+                                begin = false;
+                                $("#loader").fadeOut(1000);
+                                $("#loading").fadeOut(1000);
+                                $("#ready").css("color", "rgba(255,255,255,1.0)");
+                                $("#ready").delay(2000).fadeIn(1000);
+                            }
+                    }, onProgress, onError );
+                    
+                }
+            }
+
+
+
+            //  LL                               DD
+            //  LL                               DD
+            //  LL        AAAAA   NNNNN      DDD DD
+            //  LL      AA    AA  NN   NN  DD   DDD
+            //  LL      AA    AA  NN   NN  DD    DD
+            //  LL      AA   AAA  NN   NN  DD   DDD
+            //  LLLLLLL   AAA AA  NN   NN    DDD DD
+            
+            // SIDEWALK
+            
+            var sidewalk_counter = 0;
+            var sidewalk_x;
+            var sidewalk_z;
+            function load_sidewalk()
+            {
+                for(var i = 0; i < 10; i++)
+                {
+                    var geometry = new THREE.BoxGeometry( 1200, 10, 200 );
+                    geometry.castShadow = true; 
+                    geometry.recieveShadow = true;
+                    var material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture_concrete } );
+                    var mesh = new THREE.Mesh( geometry, material );
+
+                    sidewalk_z = -1200;
+
+                    // if(i == 1) { sidewalk_x = -400 }
+                    // if(i == 1) { sidewalk_counter = 0; }
+
+                    mesh.position.set(400, FLOOR + 2.5, sidewalk_z * i);
+                    mesh.rotation.y = - Math.PI / 2;
+
+                    mesh.castShadow = true; 
+                    mesh.recieveShadow = true;
+
+                    scene.add( mesh );
+                }
+                for(var i = 0; i < 10; i++)
+                {
+                    var geometry = new THREE.BoxGeometry( 1200, 10, 200 );
+                    geometry.castShadow = true; 
+                    geometry.recieveShadow = true;
+                    var material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture_concrete } );
+                    var mesh = new THREE.Mesh( geometry, material );
+
+                    sidewalk_z = -1200;
+
+                    // if(i == 1) { sidewalk_x = -400 }
+                    // if(i == 1) { sidewalk_counter = 0; }
+
+                    mesh.position.set(-400, FLOOR + 2.5, sidewalk_z * i);
+                    mesh.rotation.y = - Math.PI / 2;
+
+                    mesh.castShadow = true; 
+                    mesh.recieveShadow = true;
+
+                    scene.add( mesh );
+                }
+            }
+            //object.position.set(lamp_x * lamp_d, -1, l_lamp_counter * lamp_d * 5);
+
+            //  RRRRRR                             DD
+            //  RR   RR                            DD
+            //  RR   RR    OOO        AAAA      DDDDD
+            //  RRRRRR   OO   OO    AA   AA   DD   DD
+            //  RR  RR  OO     OO  AA    AA  DD    DD
+            //  RR   RR  OO   OO   AA   AAA  DD   DDD
+            //  RR    RR   OOO       AAA AA    DDD DD
+
+            // http://1.bp.blogspot.com/-hRjkenUYoKY/UmpIPiHYWiI/AAAAAAAAEdM/GeK1gzXa4ag/s1600/Tileable+concrete+asphalt+road+floor+texture+(1).jpg
+            function load_road()
+            {
+                for(var i = 0; i < 10; i++)
+                {
+                    var geometry = new THREE.PlaneBufferGeometry( 1200, 600 );
+                    var material = new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0x111111, map: texture_asphalt } );
+                    var mesh = new THREE.Mesh( geometry, material );
+
+                    road_z = -1200 * i;
+
+                    mesh.position.set(0, FLOOR + 1, road_z);
+                    mesh.rotation.x = - Math.PI / 2;
+                    mesh.rotation.z = - Math.PI / 2;
+                    mesh.castShadow = true; 
+                    mesh.recieveShadow = true;
+
+                    // road.push( mesh );
+                    scene.add( mesh );
+                }
+            }
+            
+            //  DDDDDD     
+            //  DD    DD   
+            //  DD     DD     OOO    MMMMM MMM      EEE
+            //  DD     DD   OO  OO   MM  MM  MM   EE   EE
+            //  DD     DD  OO    OO  MM  MM  MM  EEEEEEEEE
+            //  DD    DD    OO  OO   MM  MM  MM   EE
+            //  DDDDDD        OOO    MM  MM  MM     EEEE
+            
+            function load_skydome() {
+            	loader.load( 'assets/objects/sky_dome.obj', function ( object ) {
+
+                    object.traverse( function ( child ) {
+                        if ( child instanceof THREE.Mesh ) {
+                            child.material.map = texture_clock;
+                        }
+                    });
+
+                    var s = 50;
+                    object.scale.set( s, s, s );
+                    object.position.y = -850000;
+                    scene.add( object );
+                    objects.push( object );
+                }, onProgress, onError );
+            }
+
+            //  RRRRRR             II  
+            //  RR   RR                 
+            //  RR   RR    AAAAA   II  NNNNNN
+            //  RRRRRR   AA    AA  II  NN   NN
+            //  RR  RR   AA    AA  II  NN   NN
+            //  RR   RR  AA   AAA  II  NN   NN
+            //  RR    RR   AAA AA  II  NN   NN
+            
+            
+            // https://tutorialsforvr.com/raining-experience-vr-tutorial/
+            // https://github.com/realitypipe/daysinvr/blob/master/projects/day5/script.js
+            function rain() {
+
+                var rainTexture = new THREE.TextureLoader().load('assets/materials/raindrop.png');
+                rainTexture.flipY = false;
+
+                //var material = new THREE.MeshLambertMaterial({ map: texture, side: THREE.DoubleSide });
+
+                particleGroup = new SPE.Group({
+                    texture: {
+                        value: rainTexture
+                    },
+                    fog: true
+                });
+
+                emitter = new SPE.Emitter({
+                    maxAge: {
+                        value: 5
+                    },
+                    position: {
+                        value: new THREE.Vector3(0, 5, 0),
+                        spread: new THREE.Vector3(5000, 5000, -50000)
+                    },
+                    acceleration: {
+                        value: new THREE.Vector3(0, 500, 0),
+                    },
+                    velocity: {
+                        value: new THREE.Vector3(10, 5, 10),
+                        spread: new THREE.Vector3(10.5, 10.01, 10.2)
+                    },
+                    color: {
+                        value: [ new THREE.Color(0xffffff)]
+                    },
+                    opacity: {
+                        value: [0.8, 0.8]
+                    },
+                    rotation: {
+                        value: [1, 10]
+                    },
+                    size: {
+                        value: [5.05, -  5.01],
+                        spread: [1.05, 1.1]
+                    },
+                      activeMultiplier: 0.5,
+                      particleCount: 500000
+                });
+
+                particleGroup.addEmitter(emitter);
+                scene.add(particleGroup.mesh);
+                particleGroup.tick(32);
+            }
+
+
+            
+            // function update()
+            // {
+            //     // https://stemkoski.github.io/Three.js/Particle-Engine.html
+            //     var dt = clock.getDelta();
+            //     engine.update( dt * 0.5 );  
+            // }
+            
+            
+            
+			//  RRRRRR                             DD
+            //  RR    RR                           DD
+            //  ON    RR     EEE    NNNNN       DDDDD     EEE     RRRR
+            //  RRRRRRR    EE   EE  NN   NN   DD   DD   EE   EE  RR  RR
+            //  RR   RR   EEEEEEEE  NN   NN  DD    DD  EEEEEEEE  RR
+            //  RR    RR   EE       NN   NN  DD   DDD   EE       RR
+            //  RR     RR   EEEEE   NN   NN   DDDD DD    EEEEE   RR
+
+            function renderer() {
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+				document.body.appendChild( renderer.domElement );
+
+                // https://threejs.org/examples/webgl_shadowmap.html
+                // mixer.update( delta );
+                for ( var i = 0; i < morphs.length; i ++ ) {
+                    var morph = morphs[ i ];
+                    morph.position.x += morph.speed * delta;
+
+                    if ( morph.position.x  > 2000 )  {
+
+                        morph.position.x = - 1000 - Math.random() * 500;
+                    }
+                }
+	                
+                renderer.autoClear = false;
+	            renderer.shadowMap.enabled = true;
+				renderer.shadowMap.type = THREE.PCFShadowMap;
+	            // stats = new Stats();
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+
+            //  RRRRRR
+            //  RR    RR                     II
+            //  RR    RR     EEE     SSSSS       ZZZZZZ    EEE
+            //  RRRRRRR    EE   EE  SS       II     ZZ   EE   EE
+            //  RR   RR   EEEEEEEE   SSSSS   II    ZZ   EEEEEEEE
+            //  RR    RR   EE            SS  II   ZZ     EE
+            //  RR     RR   EEEEE    SSSSS   II  ZZZZZZ   EEEEE
+            
+			function onWindowResize() {
+
+                SCREEN_WIDTH = window.innerWidth;
+				SCREEN_HEIGHT = window.innerHeight;
+
+				camera.aspect = SCREEN_WIDTH / SCREEN_HEIGHT;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( SCREEN_WIDTH, SCREEN_HEIGHT );
+                
+                controls.handleResize();
+
+			}
+            
+            //    AAAA             
+            //   AA  AA            II  
+            //  AA    AA  NNNNN        MMMMM MMMMM
+            //  AA    AA  NN   NN  II  MM   MM   MM
+            //  AAAAAAAA  NN   NN  II  MM   MM   MM
+            //  AA    AA  NN   NN  II  MM   MM   MM
+            //  AA    AA  NN   NN  II  MM   MM   MM
+
+            var clock = new THREE.Clock(true);
+            var tick = 0;
+			function animate() 
+            {
+				requestAnimationFrame( animate );
+                ifControlsTrue();
+                animation_buildings();
+                animation_pendules();
+                animation_clocks();
+                animation_spin();
+
+                // https://github.com/realitypipe/daysinvr/blob/master/projects/day5/script.js
+                var delta = clock.getDelta();
+                particleGroup.tick(delta);
+
+				renderer.render( scene, camera );
+			}
+
+            function animation_buildings() 
+            {
+                for(var i = 0; i < buildings.length; i++) 
+                {
+                    buildings[i].scale.y += 0.00005;                                   
+                }
+            }
+
+            function animation_pendules() 
+            {
+                for(var i = 0; i < pendules.length; i++) 
+                {
+                    // var r = (Math.random())/100
+                    pendules[i].rotation.x += 0.01;
+                    pendules[i].rotation.y += 0.01;
+                    pendules[i].rotation.z += 0.01;
+
+                    pendules[i].position.x += 1;
+                    if( pendules[i].position.x > 1500 )
+                    {
+                        pendules[i].position.x = -1500;
+                    }
+                }
+            }
+
+            function animation_clocks() 
+            {
+                for(var i = 0; i < clocks.length; i++) 
+                {
+                    // var r = (Math.random())/100
+                    clocks[i].rotation.x += 0.01;
+                    clocks[i].rotation.y += 0.01;
+                    clocks[i].rotation.z += 0.01;
+
+                    clocks[i].position.x += -1;
+                    if( clocks[i].position.x < -1500 )
+                    {
+                        clocks[i].position.x = 1500;
+                    }
+                }
+            }
+
+            function animation_spin()
+            {
+                for(var i = 0; i < spin.length; i++) 
+                {
+                    var randSpin = Math.floor( ( Math.random() * 10 ) + 1);
+                    // spin[i].rotation.x += 0.01;
+                    if(i % 10 == 0) { spin[i].rotation.x += 0.00075; }
+                    if(i % 10 == 1) { spin[i].rotation.x -= 0.00075; }
+                    if(i % 10 == 2) { spin[i].rotation.y += 0.00075; }
+                    if(i % 10 == 3) { spin[i].rotation.y -= 0.00075; }
+                    if(i % 10 == 4) { spin[i].rotation.z += 0.00075; }
+                    if(i % 10 == 5) { spin[i].rotation.z -= 0.00075; }
+                    if(i % 10 == 6) { spin[i].rotation.x += 0.00075; spin[i].rotation.y += 0.00075;  }
+                    if(i % 10 == 7) { spin[i].rotation.x -= 0.00075; spin[i].rotation.y += 0.00075;  }
+                    if(i % 10 == 8) { spin[i].rotation.x += 0.00075; spin[i].rotation.y -= 0.00075;  }
+                    if(i % 10 == 9) { spin[i].rotation.x -= 0.00075; spin[i].rotation.y -= 0.00075;  }
+                }
+            }
+
+            //    SSSSS                                       DD
+            //  SS     SS                                     DD
+            //  SS            OOO     UU   UU  NNNNN       DDDDD
+            //    SSSSS     OO   OO   UU   UU  NN   NN   DD   DD
+            //         SS  OO     OO  UU   UU  NN   NN  DD    DD
+            //  SS     SS   OO   OO   UU  UUU  NN   NN  DD   DDD
+            //    SSSSS       OOO      UUU UU  NN   NN   DDDD DD
+
+            function playSounds()
+            {
+                var audioListener = new THREE.AudioListener();
+                camera.add(audioListener);
+
+                var rain = new THREE.Audio(audioListener);
+                var ambience = new THREE.Audio(audioListener);
+                var audioLoader = new THREE.AudioLoader();
+                audioLoader.load('assets/sound/elaborate_thunder-Mike_Koenig-1877244752.mp3', function(buffer) {
+                  rain.setBuffer(buffer);
+                  rain.setLoop(true);
+                  rain.setVolume(0.5);
+                  rain.play();
+                });
+                audioLoader.load('assets/sound/ambience.mp3', function(buffer) {
+                  ambience.setBuffer(buffer);
+                  ambience.setLoop(true);
+                  ambience.setVolume(0.5);
+                  ambience.play();
+                });
+            }
+
+
+			function ifControlsTrue() {
+				if ( controlsEnabled === true ) {
+					raycaster.ray.origin.copy( controls.getObject().position );
+					raycaster.ray.origin.y -= 10;
+					var intersections = raycaster.intersectObjects( objects );
+					var onObject = intersections.length > 0;
+					var time = performance.now();
+					var delta = ( time - prevTime ) / 1000;
+					velocity.x -= velocity.x * 10.0 * delta;
+					velocity.z -= velocity.z * 10.0 * delta;
+					velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+					direction.z = Number( moveForward ) - Number( moveBackward );
+					direction.x = Number( moveLeft ) - Number( moveRight );
+					direction.normalize(); // this ensures consistent movements in all directions
+            //EDIT VELOCITY
+					if ( moveForward || moveBackward ) velocity.z -= direction.z * 2000.0 * delta;
+					if ( moveLeft || moveRight ) velocity.x -= direction.x * 2000.0 * delta;
+					if ( onObject === true ) {
+						velocity.y = Math.max( 0, velocity.y );
+						canJump = true;
+					}
+					controls.getObject().translateX( velocity.x * delta );
+					controls.getObject().translateY( velocity.y * delta );
+					controls.getObject().translateZ( velocity.z * delta );
+					if ( controls.getObject().position.y < 10 ) {
+						velocity.y = 0;
+						controls.getObject().position.y = 10;
+						canJump = true;
+					}
+					prevTime = time;
+				}
+			}
+
+
+
+
+
+			function controls() {
+				controls = new THREE.PointerLockControls( camera );
+				scene.add( controls.getObject() );
+				var onKeyDown = function ( event ) {
+					switch ( event.keyCode ) {
+						case 38: // up
+						case 87: // w
+							moveForward = true;
+							break;
+						case 37: // left
+						case 65: // a
+							moveLeft = true; break;
+						case 40: // down
+						case 83: // s
+							moveBackward = true;
+							break;
+						case 39: // right
+						case 68: // d
+							moveRight = true;
+							break;
+						case 32: // space
+							if ( canJump === true ) velocity.y += 500;
+							canJump = false;
+							break;
+					}
+				};
+				var onKeyUp = function ( event ) {
+					switch( event.keyCode ) {
+						case 38: // up
+						case 87: // w
+							moveForward = false;
+							break;
+						case 37: // left
+						case 65: // a
+							moveLeft = false;
+							break;
+						case 40: // down
+						case 83: // s
+							moveBackward = false;
+							break;
+						case 39: // right
+						case 68: // d
+							moveRight = false;
+							break;
+					}
+				};
+                document.addEventListener( 'keydown', onKeyDown, false );
+				document.addEventListener( 'keyup', onKeyUp, false );
+			}
+
+			function pointerLock() {
+				// https://threejs.org/examples/misc_controls_pointerlock.html
+                // http://www.html5rocks.com/en/tutorials/pointerlock/intro/
+				var blocker = document.getElementById( 'blocker' );
+				var end = document.getElementById( 'paragraph3' );
+				var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+				if ( havePointerLock ) {
+					var element = document.body;
+					var pointerlockchange = function ( event ) {
+						if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
+							controlsEnabled = true;
+							controls.enabled = true;
+							$("#blocker").fadeOut(2000);
+						} else {
+							controls.enabled = false;
+							blocker.style.display = 'block';
+							end.style.display = '';
+						}
+					};
+					var pointerlockerror = function ( event ) {
+						instructions.style.display = '';
+					};
+					// Hook pointer lock state change events
+					document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+					document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+					document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+					document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+					document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+					document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+					end.addEventListener( 'click', function ( event ) {
+						$("#end").fadeOut(2000);
+                        $("#instructions").delay(2000).fadeIn(1000);
+                        $(".or").css("color", "rgba(255,255,255,0.5)");
+                        $(".border").css("borderColor", "rgba(255,255,255,0.5)");
+                        $(".border").css("color", "rgba(255,255,255,0.5)");
+                        $(".quit").css("color", "rgba(255,255,255,0.5)");
+                        $(".quit").delay(500).fadeIn(1000);
+                        begin = true;
+						// Ask the browser to lock the pointer
+						element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+						element.requestPointerLock();
+					}, false );
+				} else {
+					end.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+				}
+			}   
+        });
+// $("#blocker").fadeOut(2000);
+        </script>
+	</body>
+</html>
